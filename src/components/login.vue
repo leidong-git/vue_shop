@@ -23,84 +23,81 @@
           <el-button @click="resetLoginForm" type="info">重置</el-button>
         </el-form-item>
       </el-form>
-
-    </div>
+</div>
   </div>
 </template>
-
 <script>
-  export default {
-    data() {
-      return {
-        // 这是登录表单的数据绑定
-        loginform: {
-          username: 'admin',
-          password: '123456'
-        },
-        // 这是表单验证规则对象
-        loginformrules: {
-          // 验证用户名是否合法cm
-          username: [{
-              required: true,
-              message: '请输入登录名称',
-              trigger: 'blur'
-            },
-            {
-              min: 3,
-              max: 5,
-              message: '长度在 3 到 5 个字符',
-              trigger: 'blur'
-            }
-          ],
-          // 验证密码是否合法
-          password: [{
-              required: true,
-              message: '请输入登录密码',
-              trigger: 'blur'
-            },
-            {
-              min: 6,
-              max: 15,
-              message: '长度在6到15个字符',
-              trigger: 'blur'
-            }
-          ]
-        }
-      }
-    },
-    methods: {
-      // 点击重置按钮，重置登录表单
-      resetLoginForm() {
-        // console.log(this)
-        this.$refs.loginformref.resetFields()
+export default {
+  data () {
+    return {
+      // 这是登录表单的数据绑定
+      loginform: {
+        username: 'admin',
+        password: '123456'
       },
-      // 登录验证
-      loginIn() {
-        this.$refs.loginformref.validate(async valid => {
-          // console.log(valid)
-          var that = this;
-          if (!valid) return
-          this.$HTTP.post('http://127.0.0.1:8888/api/private/v1/login', this.loginform)
-            .then(function(response) {
-              console.log(response.data);
-              if (response.data.meta.status !== 200) {
-                return that.$message.error('登录失败！');
-              } else {
-                that.$message.success('登录成功！');
-                window.sessionStorage.setItem('token', response.data.data.token);
-                that.$router.push('./home');
-              }
-            })
-            .catch(function(error) {
-              console.log(error);
-            })
+      // 这是表单验证规则对象
+      loginformrules: {
+        // 验证用户名是否合法cm
+        username: [{
+          required: true,
+          message: '请输入登录名称',
+          trigger: 'blur'
+        },
+        {
+          min: 3,
+          max: 10,
+          message: '长度在 3 到 10 个字符',
+          trigger: 'blur'
+        }
+        ],
+        // 验证密码是否合法
+        password: [{
+          required: true,
+          message: '请输入登录密码',
+          trigger: 'blur'
+        },
+        {
+          min: 6,
+          max: 15,
+          message: '长度在6到15个字符',
+          trigger: 'blur'
+        }
+        ]
+      }
+    }
+  },
+  methods: {
+    // 点击重置按钮，重置登录表单
+    resetLoginForm () {
+      // console.log(this)
+      this.$refs.loginformref.resetFields()
+    },
+    // 登录验证
+    loginIn () {
+      this.$refs.loginformref.validate(async valid => {
+        // console.log(valid)
+        if (!valid) return
+        this.$HTTP.post('http://127.0.0.1:8888/api/private/v1/login', this.loginform)
+          .then((res) => {
+            // console.log(response.data);
+            if (res.data.meta.status !== 200) {
+              return this.$message.error('登录失败！')
+            } else {
+              this.$message.success('登录成功！')
+              window.sessionStorage.setItem('token', res.data.data.token)
+              this.$router.push('./home')
+            }
+          })
+          .catch((error) => {
+            console.log(error)
+          })
           // console.log(result)
           // if (res.meta.status !== 200) return this.$message.error('登录失败！')
           // this.$message.success('登录成功！')
-        })
-      }
+      })
     }
   }
+}
 </script>
 
 <style lang="less" scoped="scoped">
